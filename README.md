@@ -30,8 +30,11 @@ It allows users to store, retrieve, and manage login credentials securely with A
 
 ## 🧪 Screenshots
 
+Login Page
 > <img width="302" height="212" alt="Screenshot 2025-07-18 220247" src="https://github.com/user-attachments/assets/b6310463-24fa-4c16-8ca9-2f57e33ba3d1" />
+Home Page
 > <img width="1374" height="753" alt="Screenshot 2025-07-18 220345" src="https://github.com/user-attachments/assets/e6dbee1a-7fc6-4234-a69a-8204f57ad677" />
+Home Page
 > <img width="1374" height="753" alt="Screenshot 2025-07-18 220618" src="https://github.com/user-attachments/assets/70061933-bc0c-4fd4-8b39-98d0bf566065" />
 
 ---

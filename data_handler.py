@@ -5,7 +5,7 @@ from crypto_utils import *
 
 
 def save_data(website_entry, email_entry, password_entry):
-    with open(MASTER_FILE, "rb") as f:
+    with open(MASTER_PATH, "rb") as f:
         key = f.read()
 
     website = website_entry.get()
@@ -24,7 +24,7 @@ def save_data(website_entry, email_entry, password_entry):
         return
 
     try:
-        with open(DATA_FILE, "r") as file:
+        with open(DATA_PATH, "r") as file:
             data = json.load(file)
     except (FileNotFoundError, json.JSONDecodeError):
         data = {}
@@ -33,7 +33,7 @@ def save_data(website_entry, email_entry, password_entry):
     next_key = str(max(numeric_keys) + 1) if numeric_keys else "0"
     data[next_key] = new_data
 
-    with open(DATA_FILE, "w") as file:
+    with open(DATA_PATH, "w") as file:
         json.dump(data, file, indent=4)
 
     messagebox.showinfo("Successful", "Account has been added successfully.")
@@ -50,15 +50,15 @@ def find_password(website_entry, tree):
     keyword = website_entry.get().lower()
 
     try:
-        with open(DATA_FILE, "r") as file:
+        with open(DATA_PATH, "r") as file:
             database = json.load(file)
-    except FileNotFoundError:
+    except (json.decoder.JSONDecodeError, FileNotFoundError):
         messagebox.showinfo("Error", "No data file found.")
         return
 
     matches = [val for val in database.values() if keyword in val["website"].lower()]
     if matches:
-        with open(MASTER_FILE, "rb") as f:
+        with open(MASTER_PATH, "rb") as f:
             key = f.read()
 
         for item in matches:
@@ -72,12 +72,12 @@ def find_password(website_entry, tree):
 def tampilkan_data(tree):
     tree.delete(*tree.get_children())
     try:
-        with open(DATA_FILE, "r") as file:
+        with open(DATA_PATH, "r") as file:
             data = json.load(file)
     except (FileNotFoundError, json.JSONDecodeError):
         return
 
-    with open(MASTER_FILE, "rb") as f:
+    with open(MASTER_PATH, "rb") as f:
         key = f.read()
 
     for item in data.values():
@@ -110,7 +110,7 @@ def edit_data(tree, website_entry, email_entry, password_entry, add_button, refr
             return
 
         try:
-            with open(DATA_FILE, "r") as file:
+            with open(DATA_PATH, "r") as file:
                 data = json.load(file)
 
             keys_to_delete = [k for k, v in data.items() if v["website"] == old_website and v["email"] == old_email]
@@ -120,13 +120,16 @@ def edit_data(tree, website_entry, email_entry, password_entry, add_button, refr
             numeric_keys = [int(k) for k in data if k.isdigit()]
             next_key = str(max(numeric_keys) + 1) if numeric_keys else "0"
 
+            with open(MASTER_PATH, "rb") as f:
+                key = f.read()
+
             data[next_key] = {
                 "website": new_website,
                 "email": new_email,
-                "password": new_password
+                "password": encrypt_data(new_password, key)
             }
 
-            with open(DATA_FILE, "w") as file:
+            with open(DATA_PATH, "w") as file:
                 json.dump(data, file, indent=4)
 
             refresh_callback(tree)
@@ -158,14 +161,14 @@ def delete_data(tree, refresh_callback):
     website, email = values[0], values[1]
 
     try:
-        with open(DATA_FILE, "r") as file:
+        with open(DATA_PATH, "r") as file:
             data = json.load(file)
 
         keys_to_delete = [k for k, v in data.items() if v["website"] == website and v["email"] == email]
         for k in keys_to_delete:
             del data[k]
 
-        with open(DATA_FILE, "w") as file:
+        with open(DATA_PATH, "w") as file:
             json.dump(data, file, indent=4)
 
         refresh_callback(tree)

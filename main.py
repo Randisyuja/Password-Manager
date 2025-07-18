@@ -1,11 +1,10 @@
 from tkinter import *
-from tkinter import ttk, messagebox
+from tkinter import ttk
 from PIL import Image, ImageTk
 from password_generator import generate_password
 from data_handler import save_data, find_password, tampilkan_data, edit_data, delete_data, copy_password
-from constants import LOCK_IMG_PATH, MASTER_FILE
-from authentication import save_master_password, validate_master_password
-import os
+from constants import LOCK_IMG_PATH
+from authentication import check_password
 
 
 def main_app():
@@ -65,23 +64,10 @@ login_window.title("Login - Password Manager")
 login_window.geometry("300x180")
 
 
-def check_password():
-    input_pw = pw_entry.get()
-    if not os.path.exists(MASTER_FILE):
-        save_master_password(input_pw)
-        messagebox.showinfo("Success", "Master password set. Restart app.")
-        login_window.destroy()
-    elif validate_master_password(input_pw):
-        login_window.destroy()
-        main_app()
-    else:
-        messagebox.showerror("Error", "Wrong master password!")
-
-
 Label(login_window, text="Enter Master Password:", font=("Arial", 12)).pack(pady=20)
 pw_entry = Entry(login_window, show="*", width=25)
 pw_entry.pack()
-Button(login_window, text="Login", command=check_password).pack(pady=10)
+Button(login_window, text="Login", command=lambda: check_password(login_window, main_app, pw_entry)).pack(pady=10)
 
 pw_entry.focus()
 login_window.mainloop()

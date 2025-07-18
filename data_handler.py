@@ -172,3 +172,19 @@ def delete_data(tree, refresh_callback):
         messagebox.showinfo("Success", "Record deleted successfully.")
     except FileNotFoundError:
         messagebox.showerror("Error", "Data file not found.")
+
+
+def copy_password(window, tree):
+    selected_item = tree.focus()
+    if not selected_item:
+        messagebox.showwarning("Warning", "Please select a row first.")
+        return
+
+    values = tree.item(selected_item, "values")
+    password = values[2]  # kolom ke-3 adalah password
+
+    window.clipboard_clear()
+    window.clipboard_append(password)
+    window.update()  # untuk memastikan clipboard terisi
+    messagebox.showinfo("Copied", "Password copied to clipboard!")
+

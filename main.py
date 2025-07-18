@@ -1,9 +1,9 @@
 from tkinter import *
-from tkinter import messagebox, ttk
+from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
 from password_generator import generate_password
-from data_handler import save_data, find_password, tampilkan_data, edit_data, delete_data
-from constants import LOCK_IMG_PATH, MASTER_FILE, SALT_PATH
+from data_handler import save_data, find_password, tampilkan_data, edit_data, delete_data, copy_password
+from constants import LOCK_IMG_PATH, MASTER_FILE
 from authentication import save_master_password, validate_master_password
 import os
 
@@ -30,7 +30,7 @@ def main_app():
     Label(text="Website:").grid(row=3, column=0)
     Label(text="Email/Username:").grid(row=4, column=0)
     Label(text="Password:").grid(row=5, column=0)
-    Label(text="Account Lists", font="Arial 16 bold").grid(row=0, column=6, columnspan=3, padx=(100,0))
+    Label(text="Account Lists", font="Arial 16 bold").grid(row=0, column=6, columnspan=3, padx=(100, 0))
 
     # Entry Fields
     website_entry = Entry(width=48)
@@ -52,10 +52,10 @@ def main_app():
     Button(text="Generate Password", command=lambda: generate_password(password_entry)).grid(row=5, column=2, padx=(15, 0))
     add_button = Button(text="Add", width=30, command=lambda: save_data(website_entry, email_entry, password_entry))
     add_button.grid(row=6, column=1, columnspan=1)
-
     Button(window, text="Tampilkan Data", width=15, command=lambda: tampilkan_data(tree)).grid(row=3, column=6, pady=10)
     Button(window, text="Edit", width=15, command=lambda: edit_data(tree, website_entry, email_entry, password_entry, add_button, tampilkan_data)).grid(row=4, column=6, pady=10, padx=10)
     Button(window, text="Delete", width=15, command=lambda: delete_data(tree, tampilkan_data)).grid(row=5, column=6, pady=10, padx=10)
+    Button(window, text="Copy Password", width=15, command=lambda: copy_password(window, tree)).grid(row=6, column=6, pady=10)
 
     window.mainloop()
 

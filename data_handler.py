@@ -1,17 +1,22 @@
 import json
 from tkinter import messagebox, END
 from constants import *
+from crypto_utils import *
 
 
 def save_data(website_entry, email_entry, password_entry):
+    with open(MASTER_FILE, "rb") as f:
+        key = f.read()
+
     website = website_entry.get()
     email = email_entry.get()
     password = password_entry.get()
+    enc_pw = encrypt_data(password, key)
 
     new_data = {
         "website": website,
         "email": email,
-        "password": password,
+        "password": enc_pw,
     }
 
     if not website or not password:
@@ -53,8 +58,11 @@ def find_password(website_entry, tree):
 
     matches = [val for val in database.values() if keyword in val["website"].lower()]
     if matches:
+        with open(MASTER_FILE, "rb") as f:
+            key = f.read()
+
         for item in matches:
-            tree.insert("", "end", values=(item["website"], item["email"], item["password"]))
+            tree.insert("", "end", values=(item["website"], item["email"], decrypt_data(item["password"], key)))
     else:
         messagebox.showinfo("Not Found", f"No data found for {keyword}.")
 
@@ -69,8 +77,11 @@ def tampilkan_data(tree):
     except (FileNotFoundError, json.JSONDecodeError):
         return
 
+    with open(MASTER_FILE, "rb") as f:
+        key = f.read()
+
     for item in data.values():
-        tree.insert("", "end", values=(item["website"], item["email"], item["password"]))
+        tree.insert("", "end", values=(item["website"], item["email"], decrypt_data(item["password"], key)))
 
 
 def edit_data(tree, website_entry, email_entry, password_entry, add_button, refresh_callback):
@@ -135,11 +146,11 @@ def edit_data(tree, website_entry, email_entry, password_entry, add_button, refr
 
 def delete_data(tree, refresh_callback):
     selected = tree.focus()
+    from tkinter import messagebox
     if not selected:
         messagebox.showwarning("Warning", "Please select a record to delete.")
         return
 
-    from tkinter import messagebox
     if not messagebox.askyesno("Confirm", "Are you sure you want to delete this record?"):
         return
 
